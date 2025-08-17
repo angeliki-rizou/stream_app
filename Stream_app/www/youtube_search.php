@@ -27,12 +27,21 @@ try {
 // YouTube API Key
 $apiKey = "AIzaSyACEeNAnLjJ8opYP5YLrEu4Xh-4_JCLfKE";
 
+// Αναζήτηση στο YouTube
 $searchResults = [];
+$nextPage = null;
+$prevPage = null;
+
 if (!empty($_GET['query'])) {
     $query = urlencode($_GET['query']);
-    $maxResults = 5;
+    $maxResults = 10; 
+    $pageToken = isset($_GET['page']) ? $_GET['page'] : '';
 
     $url = "https://www.googleapis.com/youtube/v3/search?part=snippet&q={$query}&type=video&maxResults={$maxResults}&key={$apiKey}";
+    if ($pageToken) {
+        $url .= "&pageToken=" . urlencode($pageToken);
+    }
+
     $json = file_get_contents($url);
     $data = json_decode($json, true);
 
@@ -46,6 +55,10 @@ if (!empty($_GET['query'])) {
             ];
         }
     }
+
+    // αποθήκευσε tokens για σελιδοποίηση
+    $nextPage = $data['nextPageToken'] ?? null;
+    $prevPage = $data['prevPageToken'] ?? null;
 }
 ?>
 <!doctype html>
@@ -60,7 +73,7 @@ if (!empty($_GET['query'])) {
 <hr>
 
 <form method="get">
-    <input type="text" name="query" placeholder="Αναζήτηση..." required>
+    <input type="text" name="query" value="<?php echo isset($_GET['query']) ? htmlspecialchars($_GET['query']) : ''; ?>" placeholder="Αναζήτηση..." required>
     <button type="submit">Αναζήτηση</button>
 </form>
 
@@ -93,11 +106,24 @@ if (!empty($_GET['query'])) {
         </div>
         <hr>
     <?php endforeach; ?>
+
+    <!-- Σελιδοποίηση -->
+    <div style="margin-top:20px;">
+        <?php if ($prevPage): ?>
+            <a href="?query=<?php echo urlencode($_GET['query']); ?>&page=<?php echo $prevPage; ?>">⬅ Προηγούμενα</a>
+        <?php endif; ?>
+
+        <?php if ($nextPage): ?>
+            <a href="?query=<?php echo urlencode($_GET['query']); ?>&page=<?php echo $nextPage; ?>">Επόμενα ➡</a>
+        <?php endif; ?>
+    </div>
+
 <?php elseif (isset($_GET['query'])): ?>
     <p>Δεν βρέθηκαν αποτελέσματα.</p>
 <?php endif; ?>
 
 </body>
 </html>
+
 
 
