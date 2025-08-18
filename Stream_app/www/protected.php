@@ -8,10 +8,36 @@ if (!isset($_SESSION['user_id'])) {
 <!doctype html>
 <html lang="el">
 <head>
+    <style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #000;
+    transition: background 0.3s, color 0.3s;
+  }
+  .theme-toggle {
+    background: #121212;
+    color: #eee;
+  }
+  .theme-toggle a {
+    color: #80cbc4;
+  }
+  button {
+    margin: 5px 0;
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+</style>
+
 <meta charset="utf-8">
 <title>Κεντρικό Μενού</title>
+<script src="theme_toggle.js"></script>
 </head>
 <body>
+
+<button onclick="theme_toggle()">Toggle</button>
+   
+
 <h1>👋 Καλώς ήρθες, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
 <hr>
 
@@ -41,4 +67,6 @@ if (!isset($_SESSION['user_id'])) {
 
 </body>
 </html>
+
+
 
