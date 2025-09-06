@@ -76,57 +76,112 @@ try {
 } catch (PDOException $e) {
     die("Σφάλμα: " . $e->getMessage());
 }
+
+// τίτλος σελίδας
+$page_title = "Αναζήτηση σε λίστες - StreamApp";
+
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="el">
-<head>
-<meta charset="utf-8">
-<title>Αναζήτηση σε λίστες</title>
-</head>
-<body>
 <h1>🔍 Αναζήτηση σε λίστες περιεχομένου</h1>
-<a href="protected.php">⬅ Επιστροφή στο μενού</a>
+<a href="protected.php" class="w3-button w3-blue">⬅ Επιστροφή στο μενού</a>
 <hr>
 
-<form method="get">
-    <label>Κείμενο: <input type="text" name="q" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>"></label><br>
-    <label>Από: <input type="date" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? ''); ?>"></label>
-    <label>Έως: <input type="date" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? ''); ?>"></label><br>
-    <label>Χρήστης: <input type="text" name="user" value="<?php echo htmlspecialchars($_GET['user'] ?? ''); ?>"></label><br>
-    <label>Ανά σελίδα: 
-        <select name="perPage">
-            <option value="10" <?php if(($perPage??10)==10) echo 'selected'; ?>>10</option>
-            <option value="25" <?php if(($perPage??10)==25) echo 'selected'; ?>>25</option>
-        </select>
-    </label>
-    <button type="submit">Αναζήτηση</button>
+<form method="get" class="w3-container w3-card w3-padding">
+    <div class="w3-row-padding">
+        <div class="w3-col s12 m6">
+            <label>Κείμενο:</label>
+            <input class="w3-input w3-border" type="text" name="q" placeholder="Τίτλος ή όνομα λίστας" value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>">
+        </div>
+        <div class="w3-col s12 m6">
+            <label>Χρήστης:</label>
+            <input class="w3-input w3-border" type="text" name="user" placeholder="Username, όνομα ή email" value="<?php echo htmlspecialchars($_GET['user'] ?? ''); ?>">
+        </div>
+    </div>
+    
+    <div class="w3-row-padding w3-margin-top">
+        <div class="w3-col s12 m4">
+            <label>Από:</label>
+            <input class="w3-input w3-border" type="date" name="date_from" value="<?php echo htmlspecialchars($_GET['date_from'] ?? ''); ?>">
+        </div>
+        <div class="w3-col s12 m4">
+            <label>Έως:</label>
+            <input class="w3-input w3-border" type="date" name="date_to" value="<?php echo htmlspecialchars($_GET['date_to'] ?? ''); ?>">
+        </div>
+        <div class="w3-col s12 m4">
+            <label>Ανά σελίδα:</label>
+            <select class="w3-select w3-border" name="perPage">
+                <option value="10" <?php if(($perPage??10)==10) echo 'selected'; ?>>10</option>
+                <option value="25" <?php if(($perPage??10)==25) echo 'selected'; ?>>25</option>
+                <option value="50" <?php if(($perPage??10)==50) echo 'selected'; ?>>50</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="w3-center w3-margin-top">
+        <button type="submit" class="w3-button w3-blue w3-round">🔍 Αναζήτηση</button>
+        <a href="search_lists.php" class="w3-button w3-gray w3-round">❌ Καθαρισμός</a>
+    </div>
 </form>
 
 <hr>
 
 <?php if ($results): ?>
-    <ul>
-    <?php foreach ($results as $r): ?>
-        <li>
-            <strong><?php echo htmlspecialchars($r['title']); ?></strong>
-            (Λίστα: <?php echo htmlspecialchars($r['list_name']); ?>, 
-            Χρήστης: <?php echo htmlspecialchars($r['username']); ?>, 
-            Ημ/νία: <?php echo htmlspecialchars($r['created_at']); ?>)
-            <a href="watch.php?id=<?php echo $r['content_id']; ?>">▶ Δες το</a>
-        </li>
-    <?php endforeach; ?>
-    </ul>
+    <div class="w3-container">
+        <h3>Αποτελέσματα (<?php echo $total; ?>):</h3>
+        
+        <?php foreach ($results as $r): ?>
+        <div class="w3-card w3-padding w3-margin-bottom w3-hover-shadow">
+            <h4><strong><?php echo htmlspecialchars($r['title']); ?></strong></h4>
+            <p>
+                <span class="w3-tag w3-blue">Λίστα: <?php echo htmlspecialchars($r['list_name']); ?></span>
+                <span class="w3-tag w3-green">Χρήστης: <?php echo htmlspecialchars($r['username']); ?></span>
+                <span class="w3-tag w3-orange">Ημ/νία: <?php echo date('d/m/Y H:i', strtotime($r['created_at'])); ?></span>
+            </p>
+            <a href="watch.php?id=<?php echo $r['content_id']; ?>" class="w3-button w3-green w3-small">▶ Δες το βίντεο</a>
+        </div>
+        <?php endforeach; ?>
 
-    <p>Σελίδα <?php echo $page; ?> από <?php echo $totalPages; ?></p>
-    <?php for ($i=1; $i <= $totalPages; $i++): ?>
-        <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>$i])); ?>">
-            <?php echo $i; ?>
-        </a>
-    <?php endfor; ?>
-
-<?php else: ?>
-    <p>Δεν βρέθηκαν αποτελέσματα.</p>
+        <!-- Σελιδοποίηση -->
+        <div class="w3-center w3-margin-top">
+            <div class="w3-bar">
+                <?php if ($page > 1): ?>
+                    <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>1])); ?>" class="w3-button w3-blue">&laquo;&laquo;</a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page-1])); ?>" class="w3-button w3-blue">&laquo;</a>
+                <?php endif; ?>
+                
+                <?php 
+                $start = max(1, $page - 2);
+                $end = min($totalPages, $start + 4);
+                $start = max(1, $end - 4);
+                
+                for ($i = $start; $i <= $end; $i++): 
+                    $class = $i == $page ? 'w3-button w3-blue w3-hover-blue' : 'w3-button';
+                ?>
+                    <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>$i])); ?>" class="<?php echo $class; ?>"><?php echo $i; ?></a>
+                <?php endfor; ?>
+                
+                <?php if ($page < $totalPages): ?>
+                    <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>$page+1])); ?>" class="w3-button w3-blue">&raquo;</a>
+                    <a href="?<?php echo http_build_query(array_merge($_GET,['page'=>$totalPages])); ?>" class="w3-button w3-blue">&raquo;&raquo;</a>
+                <?php endif; ?>
+            </div>
+            <p>Σελίδα <?php echo $page; ?> από <?php echo $totalPages; ?> (Σύνολο: <?php echo $total; ?> αποτελέσματα)</p>
+        </div>
+    </div>
+<?php elseif (!empty($_GET)): ?>
+    <div class="w3-container">
+        <div class="w3-panel w3-yellow">
+            <h3>Δεν βρέθηκαν αποτελέσματα</h3>
+            <p>Δοκιμάστε να αλλάξετε τα κριτήρια αναζήτησής σας.</p>
+        </div>
+    </div>
 <?php endif; ?>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+
+// layout
+include("layout.php");
+?>
+
