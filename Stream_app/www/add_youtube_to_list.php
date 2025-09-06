@@ -39,10 +39,49 @@ try {
     $insert_list = $pdo->prepare("INSERT INTO list_contents (list_id, content_id) VALUES (?, ?)");
     $insert_list->execute([$list_id, $content_id]);
 
-    echo "✅ Το βίντεο προστέθηκε στη λίστα! <a href='view_list.php?id=$list_id'>Δες τη λίστα</a> | <a href='youtube_search.php'>🔍 Νέα αναζήτηση</a>";
+    //τίτλος σελίδας
+    $page_title = "Προσθήκη βίντεο - StreamApp";
+
+
+    ob_start();
+    ?>
+    <div class="w3-container">
+        <div class="w3-panel w3-green">
+            <h3>✅ Επιτυχία!</h3>
+            <p>Το βίντεο προστέθηκε στη λίστα!</p>
+        </div>
+        <p>
+            <a href='view_list.php?id=<?php echo $list_id; ?>' class="w3-button w3-blue">Δες τη λίστα</a>
+            <a href='youtube_search.php' class="w3-button w3-green">🔍 Νέα αναζήτηση</a>
+        </p>
+    </div>
+    <?php
+    $content = ob_get_clean();
+
+    // layout
+    include("layout.php");
 
 } catch (PDOException $e) {
-    die("Σφάλμα: " . $e->getMessage());
-}
+    //τίτλος σελίδας
+    $page_title = "Σφάλμα - StreamApp";
 
+    // σφάλμα
+    ob_start();
+    ?>
+    <div class="w3-container">
+        <div class="w3-panel w3-red">
+            <h3>❌ Σφάλμα!</h3>
+            <p>Σφάλμα: <?php echo $e->getMessage(); ?></p>
+        </div>
+        <p>
+            <a href='youtube_search.php' class="w3-button w3-blue">🔍 Επιστροφή στην αναζήτηση</a>
+        </p>
+    </div>
+    <?php
+    $content = ob_get_clean();
+
+    // layout
+    include("layout.php");
+}
+?>
 
