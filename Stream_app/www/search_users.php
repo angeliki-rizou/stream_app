@@ -25,35 +25,53 @@ try {
 } catch (PDOException $e) {
     die("Σφάλμα: " . $e->getMessage());
 }
+
+//τίτλος σελίδας
+$page_title = "Αναζήτηση χρηστών";
+
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="el">
-<head>
-<meta charset="utf-8">
-<title>Αναζήτηση χρηστών</title>
-</head>
-<body>
-<h1>🔍 Αναζήτηση χρηστών</h1>
-<a href="protected.php">⬅ Επιστροφή στο μενού</a>
+<h1>Αναζήτηση χρηστών</h1>
+<a href="protected.php" class="w3-button w3-blue">⬅ Επιστροφή στο μενού</a>
 <hr>
 
-<form method="get">
-    <input type="text" name="q" placeholder="Username" required>
-    <button type="submit">Αναζήτηση</button>
+<form method="get" class="w3-container w3-padding">
+    <div class="w3-row">
+        <div class="w3-col s10">
+            <input class="w3-input w3-border" type="text" name="q" placeholder="Username" required value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>">
+        </div>
+        <div class="w3-col s2">
+            <button type="submit" class="w3-button w3-blue w3-block">Αναζήτηση</button>
+        </div>
+    </div>
 </form>
 
 <?php if ($results): ?>
-    <ul>
-    <?php foreach ($results as $user): ?>
-        <li>
-            <?php echo htmlspecialchars($user['username']); ?> (<?php echo htmlspecialchars($user['first_name'] . " " . $user['last_name']); ?>)
-            <a href="follow.php?id=<?php echo $user['id']; ?>">➕ Ακολούθησε</a>
-        </li>
-    <?php endforeach; ?>
-    </ul>
+    <div class="w3-container w3-margin-top">
+        <div class="w3-row-padding">
+            <?php foreach ($results as $user): ?>
+            <div class="w3-col s12 m6 l4 w3-margin-bottom">
+                <div class="w3-card w3-padding w3-hover-shadow">
+                    <h4><?php echo htmlspecialchars($user['username']); ?></h4>
+                    <p><?php echo htmlspecialchars($user['first_name'] . " " . $user['last_name']); ?></p>
+                    <a href="follow.php?id=<?php echo $user['id']; ?>" class="w3-button w3-green w3-small">➕ Ακολούθησε</a>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 <?php elseif (!empty($_GET['q'])): ?>
-    <p>Δεν βρέθηκαν χρήστες.</p>
+    <div class="w3-container w3-margin-top">
+        <div class="w3-panel w3-yellow">
+            <p>Δεν βρέθηκαν χρήστες.</p>
+        </div>
+    </div>
 <?php endif; ?>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+
+// layout
+include("layout.php");
+?>
