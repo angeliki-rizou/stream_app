@@ -31,30 +31,35 @@ try {
     die("Σφάλμα: " . $e->getMessage());
 }
 
+//τίτλος σελίδας
+$page_title = htmlspecialchars($content['title']) . " - StreamApp";
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="el">
-<head>
-<meta charset="utf-8">
-<title><?php echo htmlspecialchars($content['title']); ?></title>
-</head>
-<body>
 <h1><?php echo htmlspecialchars($content['title']); ?></h1>
 <p><?php echo nl2br(htmlspecialchars($content['description'])); ?></p>
 
 <?php if (!empty($content['youtube_id'])): ?>
-    <iframe width="560" height="315"
-            src="https://www.youtube.com/embed/<?php echo htmlspecialchars($content['youtube_id']); ?>"
-            frameborder="0"
-            allowfullscreen>
-    </iframe>
+    <div class="w3-container">
+        <div class="w3-responsive">
+            <iframe width="100%" height="400"
+                    src="https://www.youtube.com/embed/<?php echo htmlspecialchars($content['youtube_id']); ?>"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </div>
 <?php else: ?>
     <p>Δεν υπάρχει YouTube ID για αυτό το περιεχόμενο.</p>
 <?php endif; ?>
 
 <hr>
-<a href="view_contents.php">⬅ Επιστροφή</a>
-</body>
-</html>
+<a href="view_contents.php" class="w3-button w3-blue">⬅ Επιστροφή</a>
 
+<?php
+$content = ob_get_clean();
 
+// layout
+include("layout.php");
+?>
