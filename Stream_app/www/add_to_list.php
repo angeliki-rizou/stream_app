@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.html');
     exit;
 }
-
+include("layout.php");
 require 'db.php';
 
 $content_id = $_GET['content_id'] ?? null;
@@ -13,7 +13,7 @@ if (!$content_id) {
     die("Λείπει το ID περιεχομένου.");
 }
 
-// Παίρνουμε τις λίστες του χρήστη
+// λίστες του χρήστη
 $stmt = $pdo->prepare("SELECT * FROM lists WHERE user_id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $lists = $stmt->fetchAll(PDO::FETCH_ASSOC);
