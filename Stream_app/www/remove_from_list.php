@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.html');
     exit;
 }
-
+include("layout.php");
 if (!isset($_GET['list_id']) || !isset($_GET['content_id'])) {
     die("Λείπουν στοιχεία.");
 }
