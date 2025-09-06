@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.html');
     exit;
 }
-
+include("layout.php");
 require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,8 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 <form method="post">
     <input type="text" name="name" placeholder="Όνομα λίστας" required>
+     <label>
+        <input type="checkbox" name="is_public" value="1"> Δημόσια λίστα
+    </label>
     <button type="submit">Δημιουργία</button>
 </form>
 </body>
 </html>
-
