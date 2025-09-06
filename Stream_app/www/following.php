@@ -26,30 +26,61 @@ try {
 } catch (PDOException $e) {
     die("Σφάλμα: " . $e->getMessage());
 }
+// τίτλος σελίδας
+$page_title = "Ποιους ακολουθώ";
+
+
+ob_start();
 ?>
-<!doctype html>
-<html lang="el">
-<head>
-<meta charset="utf-8">
-<title>Ποιους ακολουθώ</title>
-</head>
-<body>
-<h1>👥 Ποιους ακολουθώ</h1>
-<a href="protected.php">⬅ Επιστροφή στο μενού</a>
+<h1> Ποιους ακολουθώ</h1>
+<a href="protected.php" class="w3-button w3-blue">⬅ Επιστροφή στο μενού</a>
 <hr>
 
 <?php if ($users): ?>
-    <ul>
-    <?php foreach ($users as $user): ?>
-        <li>
-            <?php echo htmlspecialchars($user['username']); ?> (<?php echo htmlspecialchars($user['first_name'] . " " . $user['last_name']); ?>)
-            <a href="unfollow.php?id=<?php echo $user['id']; ?>" style="color:red;">❌ Διαγραφή</a>
-        </li>
-    <?php endforeach; ?>
-    </ul>
+    <div class="w3-container">
+        <div class="w3-panel w3-blue w3-round">
+            <h3>Ακολουθείς: <?php echo count($users); ?> χρήστες</h3>
+        </div>
+        
+        <div class="w3-row-padding">
+            <?php foreach ($users as $user): ?>
+            <div class="w3-col s12 m6 l4 w3-margin-bottom">
+                <div class="w3-card w3-padding w3-hover-shadow">
+                    <div class="w3-center">
+                        <div class="w3-circle w3-blue w3-padding" style="width: 60px; height: 60px; line-height: 60px;">
+                            <i class="fa fa-user" style="font-size: 24px;"></i>
+                        </div>
+                    </div>
+                    <h3 class="w3-center"><?php echo htmlspecialchars($user['username']); ?></h3>
+                    <p class="w3-center w3-text-gray"><?php echo htmlspecialchars($user['first_name'] . " " . $user['last_name']); ?></p>
+                    <div class="w3-center">
+                        <a href="view_user.php?id=<?php echo $user['id']; ?>" class="w3-button w3-blue w3-small w3-round">👁️ Προβολή προφίλ</a>
+                        <a href="unfollow.php?id=<?php echo $user['id']; ?>" 
+                           class="w3-button w3-red w3-small w3-round"
+                           onclick="return confirm('Σίγουρα θέλεις να σταματήσεις να ακολουθείς τον χρήστη <?php echo htmlspecialchars($user['username']); ?>;');">
+                           ❌ Διαγραφή
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 <?php else: ?>
-    <p>Δεν ακολουθείς κανέναν.</p>
+    <div class="w3-container">
+        <div class="w3-panel w3-yellow w3-round">
+            <h3>Δεν ακολουθείς κανέναν ακόμα</h3>
+            <p>Αναζητήστε άλλους χρήστες για να αρχίσετε να τους ακολουθείτε!</p>
+        </div>
+        <div class="w3-center">
+            <a href="search_users.php" class="w3-button w3-blue w3-round">🔍 Αναζήτηση χρηστών</a>
+        </div>
+    </div>
 <?php endif; ?>
 
-</body>
-</html>
+<?php
+$content = ob_get_clean();
+
+// layout
+include("layout.php");
+?>
