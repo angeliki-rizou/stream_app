@@ -4,7 +4,7 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: login.html');
     exit;
 }
-
+include("layout.php"); 
 $DB_HOST = getenv('DB_HOST') ?: 'db';
 $DB_NAME = getenv('DB_NAME') ?: 'stream_app';
 $DB_USER = getenv('DB_USER') ?: 'appuser';
@@ -21,7 +21,7 @@ try {
         die("Λείπουν δεδομένα.");
     }
 
-    // Έλεγχος αν η λίστα ανήκει στον χρήστη
+    //αν η λίστα ανήκει στον χρήστη
     $check = $pdo->prepare("SELECT id FROM watchlists WHERE id = ? AND user_id = ?");
     $check->execute([$list_id, $_SESSION['user_id']]);
     if (!$check->fetch()) {
